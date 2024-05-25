@@ -10,17 +10,30 @@ def rotate(points, arc_degrees, axis_index):
     arc_rad = deg_to_rad * arc_degrees
 
     # z axis case
-    matrix = np.array(
-        [
-            [math.cos(arc_rad), -math.sin(arc_rad), 0],
-            [math.sin(arc_rad), math.cos(arc_rad), 0],
-            [0, 0, 1],
-        ]
-    )
     if axis_index == 0:
-        pass
-    if axis_index == 1:
-        pass
+        matrix = np.array(
+            [
+                [1, 0, 0],
+                [0, math.cos(arc_rad), -math.sin(arc_rad)],
+                [0, math.sin(arc_rad), math.cos(arc_rad)],
+            ]
+        )
+    elif axis_index == 1:
+        matrix = np.array(
+            [
+                [math.cos(arc_rad), 0, math.sin(arc_rad)],
+                [0, 1, 0],
+                [-math.sin(arc_rad), 0, math.cos(arc_rad)],
+            ]
+        )
+    elif axis_index == 2:
+        matrix = np.array(
+            [
+                [math.cos(arc_rad), -math.sin(arc_rad), 0],
+                [math.sin(arc_rad), math.cos(arc_rad), 0],
+                [0, 0, 1],
+            ]
+        )
 
     new_points = []
     for point in points:

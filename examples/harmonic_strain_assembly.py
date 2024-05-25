@@ -9,4 +9,9 @@ if __name__ == "__main__":
 
     points1, indices1, _ = xfm.merge(
         points1, indices1, [], points2, indices2, [])
+
+    points2, indices2 = mach.face_gear(54, 3, 8)
+    points1, indices1, _ = xfm.merge(
+        points1, indices1, [], points2, indices2, [])
+
     objio.save("./gears.obj", points1, indices1)
