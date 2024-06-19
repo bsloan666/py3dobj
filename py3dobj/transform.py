@@ -9,7 +9,6 @@ def rotate(points, arc_degrees, axis_index):
     deg_to_rad = math.pi / 180
     arc_rad = deg_to_rad * arc_degrees
 
-    # z axis case
     if axis_index == 0:
         matrix = np.array(
             [
@@ -46,12 +45,17 @@ def translate(points, tx, ty, tz):
     """
     translate an object by xyz
     """
+    result = []
     for point in points:
-        point[0] += tx
-        point[1] += ty
-        point[2] += tz
+        result.append(
+            (
+                point[0] + tx,
+                point[1] + ty,
+                point[2] + tz,
+            )
+        )
 
-    return points
+    return result
 
 
 def scale(points, sx, sy, sz):

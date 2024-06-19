@@ -13,12 +13,20 @@ def save(fname, points, indices, normals=None, texcoords=None):
                     uv[0], uv[1]))
 
             for index in indices:
-                handle.write("f {0}/{0} {1}/{1} {2}/{2} {3}/{3}\n".format(
-                    index[0], index[1], index[2], index[3]))
+                if len(index) == 4:
+                    handle.write("f {0}/{0} {1}/{1} {2}/{2} {3}/{3}\n".format(
+                        index[0], index[1], index[2], index[3]))
+                else:
+                    handle.write("f {0}/{0} {1}/{1} {2}/{2}\n".format(
+                        index[0], index[1], index[2]))
         else:
             for index in indices:
-                handle.write("f {0} {1} {2} {3}\n".format(
-                    index[0], index[1], index[2], index[3]))
+                if len(index) == 4:
+                    handle.write("f {0} {1} {2} {3}\n".format(
+                        index[0], index[1], index[2], index[3]))
+                else:
+                    handle.write("f {0} {1} {2}\n".format(
+                        index[0], index[1], index[2]))
 
 
 def load(fname):

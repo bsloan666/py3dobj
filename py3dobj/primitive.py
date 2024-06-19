@@ -42,7 +42,7 @@ def gear_tooth(pitch, depth):
     return points, indices
 
 
-def tube(radius1, radius2, grain, depth):
+def tube(radius1, radius2, depth, grain):
     points = []
     indices = []
     angle = math.pi * 2 / grain
@@ -88,6 +88,97 @@ def tube(radius1, radius2, grain, depth):
     return points, indices
 
 
+def cylinder(radius, depth, grain, caps=True):
+    points = []
+    indices = []
+    angle = math.pi * 2 / grain
+
+    # cap centers
+    points.extend([
+        [0, 0, 0],
+        [0, 0, depth]
+    ])
+
+    for index1 in range(grain + 1):
+        angle1 = index1 * angle
+        matrix = np.array(
+            [
+                [math.cos(angle1), -math.sin(angle1), 0],
+                [math.sin(angle1), math.cos(angle1), 0],
+                [0, 0, 1],
+            ]
+        )
+        pt1 = [radius, 0, 0]
+        pt2 = [radius, 0, depth]
+
+        points.extend([
+            np.matmul(matrix, pt1),
+            np.matmul(matrix, pt2),
+        ])
+
+        if len(points) >= 6:
+            p3 = len(points) - 3
+            p4 = p3 + 1
+            p5 = p3 + 2
+            p6 = p3 + 3
+            indices.extend([
+                (p3, p4, p6, p5),
+            ])
+            if caps:
+                indices.extend([
+                    (p4, 2, p6),
+                    (p5, 1, p3),
+                ])
+
+    return points, indices
+
+
+def cone(radius1, radius2, depth, grain, caps=True):
+
+    points = []
+    indices = []
+    angle = math.pi * 2 / grain
+
+    # cap centers
+    points.extend([
+        [0, 0, 0],
+        [0, 0, depth]
+    ])
+
+    for index1 in range(grain + 1):
+        angle1 = index1 * angle
+        matrix = np.array(
+            [
+                [math.cos(angle1), -math.sin(angle1), 0],
+                [math.sin(angle1), math.cos(angle1), 0],
+                [0, 0, 1],
+            ]
+        )
+        pt1 = [radius1, 0, 0]
+        pt2 = [radius2, 0, depth]
+
+        points.extend([
+            np.matmul(matrix, pt1),
+            np.matmul(matrix, pt2),
+        ])
+
+        if len(points) >= 6:
+            p3 = len(points) - 3
+            p4 = p3 + 1
+            p5 = p3 + 2
+            p6 = p3 + 3
+            indices.extend([
+                (p3, p4, p6, p5),
+            ])
+            if caps:
+                indices.extend([
+                    (p4, 2, p6),
+                    (p5, 1, p3),
+                ])
+
+    return points, indices
+
+
 def taurus(radius1, radius2, grain, arc_degrees=360):
     points = []
     texcoords = []
@@ -112,7 +203,7 @@ def taurus(radius1, radius2, grain, arc_degrees=360):
                 [
                     math.sin(angle2) * radius2 - radius1,
                     0,
-                    -math.cos(angle2) * radius2 - radius1
+                    -math.cos(angle2) * radius2
                 ]
             )
 
@@ -128,3 +219,30 @@ def taurus(radius1, radius2, grain, arc_degrees=360):
                 indices.append((ll_nabe, ul_nabe, this_index, lr_nabe))
 
     return points, indices, texcoords
+
+
+def box(width, height, depth):
+    points = []
+    indices = []
+
+    points.extend([
+        (0, 0, 0),
+        (0, height, 0),
+        (width, height, 0),
+        (width, 0, 0),
+        (0, 0, depth),
+        (0, height, depth),
+        (width, height, depth),
+        (width, 0, depth),
+    ])
+
+    indices.extend([
+        (1, 2, 3, 4),
+        (8, 7, 6, 5),
+        (5, 6, 2, 1),
+        (4, 3, 7, 8),
+        (2, 6, 7, 3),
+        (5, 1, 4, 8),
+    ])
+
+    return points, indices
