@@ -13,6 +13,8 @@ if __name__ == "__main__":
 
     points2, indices2, _ = prim.taurus(30, 8, 64, 360)
 
+    points2 = xfm.translate(points2, 0, 0, -20)
+
     points1, indices1, _ = xfm.merge(
         points1, indices1, [], points2, indices2, [])
 
@@ -26,6 +28,13 @@ if __name__ == "__main__":
     points2, indices2 = prim.cone(5, 20, 20, 64)
 
     points2 = xfm.translate(points2, 0, 0, 40)
+
+    points1, indices1, _ = xfm.merge(
+        points1, indices1, [], points2, indices2, [])
+
+    points2, indices2 = prim.sphere(15, 64, 180)
+
+    points2 = xfm.translate(points2, 0, 0, 80)
 
     points1, indices1, _ = xfm.merge(
         points1, indices1, [], points2, indices2, [])

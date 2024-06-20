@@ -221,6 +221,54 @@ def taurus(radius1, radius2, grain, arc_degrees=360):
     return points, indices, texcoords
 
 
+def sphere(radius, grain, arc_degrees=360):
+    points = []
+    indices = []
+    angle = math.pi * 2 / grain
+    half_angle = angle / 2
+
+    arc_steps = int(grain * arc_degrees/360)
+
+    points.extend([
+        [0, 0, -radius],
+        [0, 0, radius]
+    ])
+
+    for index1 in range(arc_steps + 1):
+        angle1 = index1 * angle
+        matrix = np.array(
+            [
+                [math.cos(angle1), -math.sin(angle1), 0],
+                [math.sin(angle1), math.cos(angle1), 0],
+                [0, 0, 1],
+            ]
+        )
+        for index2 in range(1, grain):
+            angle2 = index2 * half_angle
+
+            init_pt = np.array(
+                [
+                    math.sin(angle2) * radius,
+                    0,
+                    -math.cos(angle2) * radius
+                ]
+            )
+
+            fin_pt = np.matmul(matrix, init_pt)
+            points.append(fin_pt)
+
+    for index in range(len(points)):
+        if index > grain + 2:
+            indices.append((
+                (index - (grain - 1)) - 1,
+                (index - (grain - 1)),
+                index,
+                index - 1
+            ))
+
+    return points, indices
+
+
 def box(width, height, depth):
     points = []
     indices = []
