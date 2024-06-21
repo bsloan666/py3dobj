@@ -19,8 +19,8 @@ def gear_wheel(radius, pitch, depth):
         new_points = xfm.translate(new_points, 0, radius, 0)
         new_points = xfm.rotate(new_points, arc_per_tooth * tooth, 2)
 
-        points, indices, _ = xfm.merge(
-            points, indices, [], new_points, new_indices, [])
+        points, indices = xfm.merge(
+            points, indices, new_points, new_indices)
 
     return points, indices
 
@@ -40,8 +40,8 @@ def internal_gear(radius, pitch, depth):
         new_points = xfm.translate(new_points, 0, -radius + pitch/2, 0)
         new_points = xfm.rotate(new_points, arc_per_tooth * tooth, 2)
 
-        points, indices, _ = xfm.merge(
-            points, indices, [], new_points, new_indices, [])
+        points, indices = xfm.merge(
+            points, indices, new_points, new_indices)
 
     return points, indices
 
@@ -62,7 +62,7 @@ def face_gear(radius, pitch, depth):
         new_points = xfm.translate(new_points, 0, -radius + depth, 0)
         new_points = xfm.rotate(new_points, arc_per_tooth * tooth, 2)
 
-        points, indices, _ = xfm.merge(
-            points, indices, [], new_points, new_indices, [])
+        points, indices = xfm.merge(
+            points, indices, new_points, new_indices)
 
     return points, indices

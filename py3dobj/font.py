@@ -6,10 +6,10 @@ def letter_s(major, minor):
     """
     Stylized letter "S"
     """
-    points1, indices1, texcoords1 = prim.taurus(
+    points1, indices1 = prim.taurus(
        major, minor, 64, 270
     )
-    points2, indices2, texcoords2 = prim.taurus(
+    points2, indices2 = prim.taurus(
        major, minor, 64, 270
     )
     points1 = xfm.rotate(points1, 90, 2)
@@ -22,4 +22,4 @@ def letter_s(major, minor):
     points2 = xfm.scale(points2, 1, 0.5, 1)
 
     return xfm.merge(
-        points1, indices1, texcoords1, points2, indices2, texcoords2)
+        points1, indices1, points2, indices2)

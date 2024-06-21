@@ -181,7 +181,6 @@ def cone(radius1, radius2, depth, grain, caps=True):
 
 def taurus(radius1, radius2, grain, arc_degrees=360):
     points = []
-    texcoords = []
     indices = []
     angle = math.pi * 2 / grain
 
@@ -210,7 +209,6 @@ def taurus(radius1, radius2, grain, arc_degrees=360):
             fin_pt = np.matmul(matrix, init_pt)
             points.append(fin_pt)
 
-            texcoords.append((index2/grain, index1/grain))
             this_index = len(points)
             ul_nabe = this_index - 1
             lr_nabe = this_index - (grain + 1)
@@ -218,7 +216,7 @@ def taurus(radius1, radius2, grain, arc_degrees=360):
             if index1 and index2:
                 indices.append((ll_nabe, ul_nabe, this_index, lr_nabe))
 
-    return points, indices, texcoords
+    return points, indices
 
 
 def sphere(radius, grain, arc_degrees=360):

@@ -70,13 +70,12 @@ def scale(points, sx, sy, sz):
     return points
 
 
-def merge(points1, indices1, texcoords1, points2, indices2, texcoords2):
+def merge(points1, indices1, points2, indices2):
     offset = len(points1)
 
     points1.extend(points2)
-    texcoords1.extend(texcoords2)
 
     for face in indices2:
         indices1.append([i + offset for i in face])
 
-    return points1, indices1, texcoords1
+    return points1, indices1
