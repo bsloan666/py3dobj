@@ -12,6 +12,9 @@ def gear_wheel(radius, pitch, depth):
     indices = []
     num_teeth = int(math.pi * 2 * radius / pitch)
 
+    if depth == 0:
+        return num_teeth
+
     arc_per_tooth = 360 / num_teeth
 
     for tooth in range(num_teeth):
@@ -33,6 +36,9 @@ def internal_gear(radius, pitch, depth):
     indices = []
     num_teeth = int(math.pi * 2 * radius / pitch)
 
+    if depth == 0:
+        return num_teeth
+
     arc_per_tooth = 360 / num_teeth
 
     for tooth in range(num_teeth):
@@ -53,6 +59,9 @@ def face_gear(radius, pitch, depth):
     points = []
     indices = []
     num_teeth = int(math.pi * 2 * radius / pitch)
+
+    if depth == 0:
+        return num_teeth
 
     arc_per_tooth = 360 / num_teeth
 
