@@ -1,17 +1,11 @@
 import machine as mach
+import primitive as prim
 import transform as xfm
 import objio
 
 if __name__ == "__main__":
+    points1, indices1 = prim.sinus_cog(26, 5, 360, 24, 2)
+    points2, indices2 = prim.sinus_ring(32.5, 10, 360, 22.5, 2)
 
-    points1, indices1 = mach.gear_wheel(25, 3, 10)
-    points2, indices2 = mach.internal_gear(26.5, 3, 10)
-
-    points1, indices1 = xfm.merge(
-        points1, indices1, points2, indices2)
-
-    points2, indices2 = mach.face_gear(54, 3, 8)
-    points1, indices1 = xfm.merge(
-        points1, indices1, points2, indices2)
-
-    objio.save("./gears.obj", points1, indices1)
+    objio.save("./gears1.obj", points1, indices1)
+    objio.save("./gears2.obj", points2, indices2)

@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 
-def gear_tooth(pitch, depth):
+def gear_tooth(pitch, depth, reach=1.0):
     points = []
     indices = []
     extent = pitch/2
@@ -38,6 +38,105 @@ def gear_tooth(pitch, depth):
     indices.append([20, 19, 14, 13])
     indices.append([19, 18, 15, 14])
     indices.append([18, 17, 16, 15])
+
+    return points, indices
+
+def sinus_ring(radius, depth, grain, degrees_per_tooth, length):
+    radius1 = radius - length
+    radius2 = radius + length
+    points = []
+    indices = []
+    angle = math.pi * 2 / grain
+    interval = math.pi * 2 / degrees_per_tooth
+    
+    for index1 in range(grain + 1):
+        angle1 = index1 * angle
+        matrix = np.array(
+            [
+                [math.cos(angle1), -math.sin(angle1), 0],
+                [math.sin(angle1), math.cos(angle1), 0],
+                [0, 0, 1],
+            ]
+        )
+
+        undulate = radius1 + math.sin(index1 * interval) * length
+        pt1 = [undulate, 0, 0]
+        pt2 = [undulate, 0, depth]
+        pt3 = [radius2, 0, depth]
+        pt4 = [radius2, 0, 0]
+
+        points.extend([
+            np.matmul(matrix, pt1),
+            np.matmul(matrix, pt2),
+            np.matmul(matrix, pt3),
+            np.matmul(matrix, pt4)
+        ])
+
+        if len(points) >= 8:
+            p1 = len(points) - 7
+            p2 = p1 + 1
+            p3 = p1 + 2
+            p4 = p1 + 3
+            p5 = p1 + 4
+            p6 = p1 + 5
+            p7 = p1 + 6
+            p8 = p1 + 7
+            indices.extend([
+                (p1, p2, p6, p5),
+                (p7, p6, p2, p3),
+                (p8, p7, p3, p4),
+                (p5, p8, p4, p1)
+            ])
+
+    return points, indices
+
+
+def sinus_cog(radius, depth, grain, degrees_per_tooth, length):
+    radius1 = radius - length
+    radius2 = radius + length
+    points = []
+    indices = []
+    angle = math.pi * 2 / grain
+    interval = math.pi * 2 / degrees_per_tooth
+    
+    for index1 in range(grain + 1):
+        angle1 = index1 * angle
+        matrix = np.array(
+            [
+                [math.cos(angle1), -math.sin(angle1), 0],
+                [math.sin(angle1), math.cos(angle1), 0],
+                [0, 0, 1],
+            ]
+        )
+
+        undulate = radius2 + math.sin(index1 * interval) * length
+        pt1 = [radius1, 0, 0]
+        pt2 = [radius1, 0, depth]
+        pt3 = [undulate, 0, depth]
+        pt4 = [undulate, 0, 0]
+
+        points.extend([
+            np.matmul(matrix, pt1),
+            np.matmul(matrix, pt2),
+            np.matmul(matrix, pt3),
+            np.matmul(matrix, pt4)
+        ])
+
+        if len(points) >= 8:
+            p1 = len(points) - 7
+            p2 = p1 + 1
+            p3 = p1 + 2
+            p4 = p1 + 3
+            p5 = p1 + 4
+            p6 = p1 + 5
+            p7 = p1 + 6
+            p8 = p1 + 7
+            indices.extend([
+                (p1, p2, p6, p5),
+                (p7, p6, p2, p3),
+                (p8, p7, p3, p4),
+                (p5, p8, p4, p1)
+            ])
 
     return points, indices
 
