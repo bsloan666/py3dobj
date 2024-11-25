@@ -8,38 +8,43 @@ import primitive as prim
 import objio
 
 
-def reducer(ratio, minor_radius, axle_radius, depth):
+def reducer(ratio, minor_radius, axle_radius, depth, flip):
 
     points1, indices1 = mach.gear_wheel(minor_radius, 3, depth)
 
     points2, indices2 = mach.gear_wheel(minor_radius/ratio, 3, depth)
 
-    points1 = xfm.translate(points1, 0, 0, depth)
+    if flip:
+        points2 = xfm.translate(points2, 0, 0, depth)
+    else:    
+        points1 = xfm.translate(points1, 0, 0, depth)
 
     points1, indices1 = xfm.merge(points1, indices1, points2, indices2)
 
     points2, indices2 = prim.tube(axle_radius, minor_radius - 1, depth, 64)
 
-    points2 = xfm.translate(points2, 0, 0, depth)
-
-    points1, indices1 = xfm.merge(points1, indices1, points2, indices2)
-
-    points2, indices2 = prim.tube(
+    points3, indices3 = prim.tube(
         axle_radius, minor_radius/ratio - 1, depth, 64)
+
+    if flip:
+        points3 = xfm.translate(points3, 0, 0, depth)
+    else:
+        points2 = xfm.translate(points2, 0, 0, depth)
+
+    points2, indices2 = xfm.merge(points2, indices2, points3, indices3)
 
     points1, indices1 = xfm.merge(points1, indices1, points2, indices2)
 
     return points1, indices1
 
 
-def assembly(ratio, repeats, minor_radius, axle_radius, depth):
-    out_dir = "/var/tmp/assembly"
+def assembly(ratio, repeats, minor_radius, axle_radius, depth, flip, out_dir):
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
     height = depth
     for index in range(repeats):
-        points, indices = reducer(ratio, minor_radius, axle_radius, depth)
+        points, indices = reducer(ratio, minor_radius, axle_radius, depth, flip)
         points = xfm.translate(points, 0, 0, (index + 1) * depth)
         if index % 2:
             points = xfm.translate(points, minor_radius + minor_radius / ratio, 0, 0)
@@ -115,12 +120,35 @@ def parse_args():
         help="thickness of single cog",
     )
 
+    parser.add_argument(
+        "--flip",
+        type=int,
+        default=0,
+        dest="flip",
+        help="put small cog on top (1) vs. bottomi (0)",
+    )
+
+    parser.add_argument(
+        "--directory",
+        type=str,
+        default="/var/tmp/assembly",
+        dest="out_dir",
+        help="output_directory",
+    )
+
     args = parser.parse_args()
     return args
 
 if __name__ == "__main__":
     args = parse_args()
-    assembly(args.step_ratio, args.repeats, args.minor_radius, args.axle_radius, args.depth)
+    assembly(
+        args.step_ratio, 
+        args.repeats, 
+        args.minor_radius, 
+        args.axle_radius, 
+        args.depth, 
+        args.flip, 
+        args.out_dir)
     
     total_speed_reduction = args.step_ratio ** args.repeats
 
