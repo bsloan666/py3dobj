@@ -87,8 +87,8 @@ def add(vec_a, vec_b):
     return [a + b for a, b in zip(vec_a, vec_b)]
 
 def normal(p1, p2, p3):
-    vec_v = subtract(p2 - p1)
-    vec_w = subtract(p3 - p1)
+    vec_v = subtract(p2, p1)
+    vec_w = subtract(p3, p1)
     n_x = (vec_v[1] * vec_w[2]) - (vec_v[2] * vec_w[1])  
     n_y = (vec_v[2] * vec_w[0]) - (vec_v[0] * vec_w[2])  
     n_z = (vec_v[0] * vec_w[1]) - (vec_v[1] * vec_w[0])

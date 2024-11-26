@@ -17,11 +17,8 @@ def gear_with_axle(radius, axle_radius, depth):
     return points1, indices1
 
 def save_part(radius, axle_radius, depth, out_fname):
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
-
     points, indices = gear_with_axle(radius, axle_radius, depth)
-    stlio.save(os.path.join(out_fname, points, indices))
+    stlio.save(out_fname, points, indices)
 
 def parse_args():
     """
@@ -74,6 +71,5 @@ if __name__ == "__main__":
         args.axle_radius, 
         args.depth, 
         args.out_file)
-    
 
 
