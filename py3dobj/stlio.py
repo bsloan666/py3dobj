@@ -65,12 +65,12 @@ def save(fname, points, indices):
     tcount = pack_ints([triangle_count])
 
     with open(fname, "wb") as handle:
-        for struct in header:
-            handle.write(struct)
-        for struct in tcount:
-            handle.write(struct)
-        for struct in data:
-            handle.write(struct)
+        for obj in header:
+            handle.write(obj)
+        for obj in tcount:
+            handle.write(obj)
+        for obj in data:
+            handle.write(obj)
 
 def load(fname):
     """

@@ -278,7 +278,7 @@ def cone(radius1, radius2, depth, grain, caps=True):
     return points, indices
 
 
-def taurus(radius1, radius2, grain, arc_degrees=360):
+def torus(radius1, radius2, grain, arc_degrees=360):
     points = []
     indices = []
     angle = math.pi * 2 / grain
@@ -313,7 +313,84 @@ def taurus(radius1, radius2, grain, arc_degrees=360):
             lr_nabe = this_index - (grain + 1)
             ll_nabe = lr_nabe - 1
             if index1 and index2:
-                indices.append((ll_nabe, ul_nabe, this_index, lr_nabe))
+                indices.append((this_index, ul_nabe, ll_nabe, lr_nabe))
+
+    if arc_degrees < 360:
+        # find centerpoints
+        pcount = len(points)
+        center1 = [0, 0, 0]
+        center2 = [0, 0, 0]
+        for index in range(grain):
+            center1 = [x + y for x, y in zip(center1, points[index])]
+        center1 = [x/grain for x in center1]
+        for index in range(pcount - grain, pcount):
+            center2 = [x + y for x, y in zip(center2, points[index])]
+        center2 = [x/grain for x in center2]
+        points.append(center1)
+        points.append(center2)
+        for index in range(grain + 1):
+            indices.append([index + 1, index, pcount + 1]) 
+        for index in range(pcount - (grain + 1), pcount):
+            indices.append([index, index + 1, pcount]) 
+
+    return points, indices
+
+def tapered_torus_arc(radius1, radius2, radius3, grain, arc_degrees=360):
+    points = []
+    indices = []
+    angle = math.pi * 2 / grain
+
+    arc_steps = int(grain * arc_degrees/360)
+
+    for index1 in range(arc_steps + 1):
+        angle1 = index1 * angle
+        radius = radius2 * index1/(arc_steps + 1) + radius3 * (arc_steps - index1)/(arc_steps + 1)
+        matrix = np.array(
+            [
+                [math.cos(angle1), -math.sin(angle1), 0],
+                [math.sin(angle1), math.cos(angle1), 0],
+                [0, 0, 1],
+            ]
+        )
+        for index2 in range(grain + 1):
+            angle2 = index2 * angle
+
+            init_pt = np.array(
+                [
+                    math.sin(angle2) * radius - radius1,
+                    0,
+                    -math.cos(angle2) * radius
+                ]
+            )
+
+            fin_pt = np.matmul(matrix, init_pt)
+            points.append(fin_pt)
+
+            this_index = len(points)
+            ul_nabe = this_index - 1
+            lr_nabe = this_index - (grain + 1)
+            ll_nabe = lr_nabe - 1
+            if index1 and index2:
+                indices.append((this_index, ul_nabe, ll_nabe, lr_nabe))
+
+    # end caps
+    if arc_degrees < 360:
+        # find centerpoints
+        pcount = len(points)
+        center1 = [0, 0, 0]
+        center2 = [0, 0, 0]
+        for index in range(grain):
+            center1 = [x + y for x, y in zip(center1, points[index])]
+        center1 = [x/grain for x in center1]
+        for index in range(pcount - grain, pcount):
+            center2 = [x + y for x, y in zip(center2, points[index])]
+        center2 = [x/grain for x in center2]
+        points.append(center1)
+        points.append(center2)
+        for index in range(grain + 1):
+            indices.append([index + 1, index, pcount + 1]) 
+        for index in range(pcount - (grain + 1), pcount):
+            indices.append([index, index + 1, pcount]) 
 
     return points, indices
 

@@ -1,7 +1,7 @@
 import transform as xfm
 import primitive as prim
 import objio
-
+import sys
 
 if __name__ == "__main__":
 
@@ -11,7 +11,7 @@ if __name__ == "__main__":
     points1, indices1 = xfm.merge(
         points1, indices1, points2, indices2)
 
-    points2, indices2 = prim.taurus(30, 8, 64, 360)
+    points2, indices2 = prim.torus(30, 8, 64, 360)
 
     points2 = xfm.translate(points2, 0, 0, -20)
 
@@ -39,4 +39,4 @@ if __name__ == "__main__":
     points1, indices1 = xfm.merge(
         points1, indices1, points2, indices2)
 
-    objio.save("/var/tmp/prims.obj", points1, indices1)
+    objio.save(sys.argv[1], points1, indices1)
