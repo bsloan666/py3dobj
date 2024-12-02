@@ -221,12 +221,12 @@ def cylinder(radius, depth, grain, caps=True):
             p5 = p3 + 2
             p6 = p3 + 3
             indices.extend([
-                (p3, p4, p6, p5),
+                (p5, p6, p4, p3),
             ])
             if caps:
                 indices.extend([
-                    (p4, 2, p6),
-                    (p5, 1, p3),
+                    (p6, 2, p4),
+                    (p3, 1, p5),
                 ])
 
     return points, indices
