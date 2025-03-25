@@ -56,7 +56,7 @@ def parse_args():
     parser.add_argument(
         "--out-file",
         type=str,
-        default="/var/tmp/assembly",
+        default="/var/tmp/gear.stl",
         dest="out_file",
         help="Full path of output (stl) file",
     )

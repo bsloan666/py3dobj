@@ -6,6 +6,14 @@ import machine as mach
 import transform as xfm
 import primitive as prim
 import objio
+import stlio
+
+def spur(radius, axle_radius, depth):
+    points1, indices1 = mach.gear_wheel(radius, 3, depth)
+    points2, indices2 = prim.tube(axle_radius, radius - 1, depth, 64)
+    points1, indices1 = xfm.merge(points1, indices1, points2, indices2)
+
+    return points1, indices1
 
 
 def reducer(ratio, minor_radius, axle_radius, depth, flip):
@@ -42,32 +50,38 @@ def assembly(ratio, repeats, minor_radius, axle_radius, depth, flip, out_dir):
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-    height = depth
+    height = -depth
     for index in range(repeats):
-        points, indices = reducer(ratio, minor_radius, axle_radius, depth, flip)
+        if index == repeats - 1:
+            points, indices = spur(minor_radius/ratio, axle_radius, depth)
+        else:    
+            points, indices = reducer(ratio, minor_radius, axle_radius, depth, flip)
         points = xfm.translate(points, 0, 0, (index + 1) * depth)
+        if not index:
+            points = xfm.rotate(points, 7, 2)
         if index % 2:
+            points = xfm.rotate(points, 3, 2)
             points = xfm.translate(points, minor_radius + minor_radius / ratio, 0, 0)
 
-        objio.save(
+        stlio.save(
             os.path.join(
-                out_dir, "reducer_{0}.obj".format(index)), points, indices)
-        height += depth
+                out_dir, "reducer_{0}.stl".format(index)), points, indices)
+        height -= depth
 
-    height += depth * 2
+    height -= depth * 2
     points, indices = prim.cylinder(axle_radius - 0.1, height, 64)
-    objio.save(os.path.join(out_dir, "axle_1.obj"), points, indices)
+    stlio.save(os.path.join(out_dir, "axle_1.stl"), points, indices)
     points = xfm.translate(points, minor_radius + minor_radius / ratio, 0, 0)
-    objio.save(os.path.join(out_dir, "axle_2.obj"), points, indices)
+    stlio.save(os.path.join(out_dir, "axle_2.stl"), points, indices)
     points, indices = prim.tube(axle_radius, minor_radius / ratio, depth / 2, 64)
     points = xfm.translate(points, 0, 0, depth/2)
-    objio.save(os.path.join(out_dir, "case_1.obj"), points, indices)
+    stlio.save(os.path.join(out_dir, "case_1.stl"), points, indices)
     points = xfm.translate(points, minor_radius + minor_radius / ratio, 0, 0)
-    objio.save(os.path.join(out_dir, "case_2.obj"), points, indices)
-    points = xfm.translate(points, 0, 0, (repeats + 1.5) * depth)
-    objio.save(os.path.join(out_dir, "case_3.obj"), points, indices)
+    stlio.save(os.path.join(out_dir, "case_2.stl"), points, indices)
+    points = xfm.translate(points, 0, 0, (repeats + 1) * depth)
+    stlio.save(os.path.join(out_dir, "case_3.stl"), points, indices)
     points = xfm.translate(points, -(minor_radius + minor_radius / ratio), 0, 0)
-    objio.save(os.path.join(out_dir, "case_4.obj"), points, indices)
+    stlio.save(os.path.join(out_dir, "case_4.stl"), points, indices)
 
 
 

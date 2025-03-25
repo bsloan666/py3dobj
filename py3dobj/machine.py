@@ -43,7 +43,7 @@ def internal_gear(radius, pitch, depth):
 
     for tooth in range(num_teeth):
         new_points, new_indices = prim.gear_tooth(pitch, depth)
-        new_points = xfm.translate(new_points, 0, -radius + pitch/2, 0)
+        new_points = xfm.translate(new_points, 0, -radius, 0)
         new_points = xfm.rotate(new_points, arc_per_tooth * tooth, 2)
 
         points, indices = xfm.merge(
