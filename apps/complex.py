@@ -8,19 +8,19 @@ import primitive as prim
 import objio
 import stlio
 
-def spur(radius, axle_radius, depth):
-    points1, indices1 = mach.gear_wheel(radius, 3, depth)
+def spur(radius, axle_radius, depth, twist=0.0):
+    points1, indices1 = mach.gear_wheel(radius, 3, depth, twist=twist)
     points2, indices2 = prim.tube(axle_radius, radius - 1, depth, 64)
     points1, indices1 = xfm.merge(points1, indices1, points2, indices2)
 
     return points1, indices1
 
 
-def reducer(ratio, minor_radius, axle_radius, depth, flip):
+def reducer(ratio, minor_radius, axle_radius, depth, flip, twist=0.0):
 
-    points1, indices1 = mach.gear_wheel(minor_radius, 3, depth)
+    points1, indices1 = mach.gear_wheel(minor_radius, 3, depth, twist=twist)
 
-    points2, indices2 = mach.gear_wheel(minor_radius/ratio, 3, depth)
+    points2, indices2 = mach.gear_wheel(minor_radius/ratio, 3, depth, twist=twist)
 
     if flip:
         points2 = xfm.translate(points2, 0, 0, depth)
@@ -46,16 +46,20 @@ def reducer(ratio, minor_radius, axle_radius, depth, flip):
     return points1, indices1
 
 
-def assembly(ratio, repeats, minor_radius, axle_radius, depth, flip, out_dir):
+def assembly(ratio, repeats, minor_radius, axle_radius, depth, flip, twist, out_dir):
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
     height = -depth
+
     for index in range(repeats):
+        sign = 1    
+        if index % 2:
+            sign = -1
         if index == repeats - 1:
-            points, indices = spur(minor_radius/ratio, axle_radius, depth)
+            points, indices = spur(minor_radius/ratio, axle_radius, depth, twist=twist*sign)
         else:    
-            points, indices = reducer(ratio, minor_radius, axle_radius, depth, flip)
+            points, indices = reducer(ratio, minor_radius, axle_radius, depth, flip, twist=twist*sign)
         points = xfm.translate(points, 0, 0, (index + 1) * depth)
         if not index:
             points = xfm.rotate(points, 7, 2)
@@ -103,6 +107,14 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--twist",
+        type=float,
+        default=0.0,
+        dest="twist",
+        help="twist in degrees for helical gears",
+    )
+
+    parser.add_argument(
         "--repeats",
         type=int,
         default=4,
@@ -139,7 +151,7 @@ def parse_args():
         type=int,
         default=0,
         dest="flip",
-        help="put small cog on top (1) vs. bottomi (0)",
+        help="put small cog on top (1) vs. bottom (0)",
     )
 
     parser.add_argument(
@@ -162,7 +174,9 @@ if __name__ == "__main__":
         args.axle_radius, 
         args.depth, 
         args.flip, 
-        args.out_dir)
+        args.twist, 
+        args.out_dir,
+    )
     
     total_speed_reduction = args.step_ratio ** args.repeats
 
