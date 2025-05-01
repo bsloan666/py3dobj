@@ -25,7 +25,7 @@ def planetary(sun_radius, ring_radius, planet_axle_radius, sun_axle_radius, dept
 
     print("GEAR_RATIO: {0}".format(sun_teeth/(ring_teeth + sun_teeth)))
     
-    points1, indices1 = comp.spur(sun_radius, sun_axle_radius, depth, twist) 
+    points1, indices1 = comp.spur(sun_radius, sun_axle_radius, depth, -twist) 
     points2, indices2 = comp.spur(planet_radius, planet_axle_radius, depth, twist)
     points3, indices3 = comp.ring(ring_radius, depth, -twist)
 
@@ -75,6 +75,7 @@ def reducer_stack(ratio, repeats, minor_radius, axle_radius, depth, flip, twist,
 
     height -= depth * 2
     points, indices = prim.cylinder(axle_radius - 0.1, height, 64)
+    points = xfm.translate(points, 0, 0, -height)
     stlio.save(os.path.join(out_dir, "axle_1.stl"), points, indices)
     points = xfm.translate(points, minor_radius + minor_radius / ratio, 0, 0)
     stlio.save(os.path.join(out_dir, "axle_2.stl"), points, indices)
@@ -89,10 +90,10 @@ def reducer_stack(ratio, repeats, minor_radius, axle_radius, depth, flip, twist,
     stlio.save(os.path.join(out_dir, "case_4.stl"), points, indices)
 
 
-def right_angle_transmission(radius, axle_radius_in, axle_radius_out, pitch, depth, twist, out_dir):
-    points, indices = comp.bevel_spur(radius, axle_radius_in, pitch, depth)
+def right_angle_transmission(radius, axle_radius_in, axle_radius_out, depth, twist, out_dir):
+    points, indices = comp.bevel_spur(radius, axle_radius_in,  depth, twist)
     stlio.save(os.path.join(out_dir, "bevel_gear1.stl"), points, indices)
-    points, indices = comp.bevel_spur(radius, axle_radius_out, pitch, depth)
+    points, indices = comp.bevel_spur(radius, axle_radius_out,  depth, -twist)
     points = xfm.rotate(points, 90, 1)
     points = xfm.translate(points, -radius, 0, radius)
     stlio.save(os.path.join(out_dir, "bevel_gear2.stl"), points, indices)

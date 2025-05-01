@@ -119,27 +119,30 @@ def gradient_scale(points, sx, sy, sz, axis_index, interval):
     """
     result = []
     for point in points:
+        blend = point[axis_index] / interval
+        cblend = 1.0 - blend
         if axis_index == 0:
+
             result.append(
                 [
                     point[0] * sx,
-                    point[1] * sy * point[axis_index]/interval,
-                    point[2] * sz * point[axis_index]/interval
+                    point[1] * sy * blend + point[1] * cblend,
+                    point[2] * sz * blend + point[2] * cblend
                 ]
             )
         elif axis_index == 1:
             result.append(
                 [
-                    point[0] * sx * point[axis_index]/interval,
+                    point[0] * sx * blend + point[0] * cblend,
                     point[1] * sy,
-                    point[2] * sz * point[axis_index]/interval
+                    point[2] * sz * blend + point[2] * cblend
                 ]
             )
         elif axis_index == 2:
             result.append(
                 [
-                    point[0] * sx * point[axis_index]/interval,
-                    point[1] * sy * point[axis_index]/interval,
+                    point[0] * sx * blend + point[0] * cblend,
+                    point[1] * sy * blend + point[1] * cblend,
                     point[2] * sz 
                 ]
             )

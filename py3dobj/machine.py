@@ -52,9 +52,9 @@ def internal_gear(radius, pitch, depth):
     return points, indices
 
 
-def segmented_spur(radius, pitch, depth, twist, scale):
+def twisted_spur(radius, pitch, depth, twist, scale):
     """
-    piecewise linear approximation of helical spur gear
+    piece-wise linear approximation of helical spur gear
     """
     points = []
     indices = []
@@ -68,12 +68,13 @@ def segmented_spur(radius, pitch, depth, twist, scale):
             points, indices, points_temp, indices_temp)
 
     points = xfm.gradient_rotate(points, twist/radius, 2, depth)
-    points = xfm.gradient_scale(points, scale, scale, 1, 2, depth)
+    if scale:
+        points = xfm.gradient_scale(points, scale, scale, 1, 2, depth)
 
     return points, indices
 
 
-def segmented_internal(radius, pitch, depth, twist):
+def twisted_internal(radius, pitch, depth, twist):
     """
     piecewise linear approximation of helical spur gear
     """
