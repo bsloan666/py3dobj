@@ -99,5 +99,13 @@ def right_angle_transmission(radius, axle_radius_in, axle_radius_out, depth, twi
     stlio.save(os.path.join(out_dir, "bevel_gear2.stl"), points, indices)
 
 
-def single_gear(radius, axle_radius, pitch, depth, twist, outdir):    
-    points, indices = comp.spur(radius, sun_axle_radius, depth, twist) 
+def single_gear(radius, axle_radius, pitch, depth, twist, out_dir):    
+    points, indices = comp.spur(radius, sun_axle_radius, depth, twist)
+    stlio.save(os.path.join(out_dir, "single_gear.stl"), points, indices)
+
+    
+def cycloidal_drive(radius, cam_radius, rod_radius, travel, depth, num_waves, crest, out_dir):
+    points, indices = comp.cycloidal_cog(radius - crest * 2, cam_radius, rod_radius, travel, depth, num_waves, crest)
+    stlio.save(os.path.join(out_dir, "cycloid_hub.stl"), points, indices)
+    points, indices = comp.cycloidal_ring(radius + crest * 2,  depth, num_waves + 1, crest)
+    stlio.save(os.path.join(out_dir, "cycloid_ring.stl"), points, indices)

@@ -55,4 +55,34 @@ def reducer(ratio, minor_radius, axle_radius, depth, flip, twist):
 
     return points1, indices1
 
+def cycloidal_cog(radius, cam_radius, rod_radius, travel, depth, num_waves, length):
+    """
+    points1, indices1 = prim.sinus_cog(28.5, 5, 360, 12, 0.8)
+    points2, indices2 = prim.sinus_ring(32.5, 10, 360, 11.6129, 0.8)
+    """
+    points1, indices1 = prim.sinus_cog(radius, depth, 360, 360/num_waves, length)
 
+    points2, indices2 = prim.tube(cam_radius, cam_radius + 5, depth, 64)
+
+    points1, indices1 = xfm.merge(points1, indices1, points2, indices2)
+
+    for index in range(6):
+        points2, indices2 = prim.tube(rod_radius + travel, rod_radius + travel + 5, depth, 64)
+        points2 = xfm.translate(points2, cam_radius + (radius - cam_radius) / 2 , 0, 0)
+        points2 = xfm.rotate(points2, 60 * index, 2)
+        points1, indices1 = xfm.merge(points1, indices1, points2, indices2)
+
+    return points1, indices1
+
+def cycloidal_ring(radius,  depth, num_waves, length):
+    """
+    points1, indices1 = prim.sinus_cog(28.5, 5, 360, 12, 0.8)
+    points2, indices2 = prim.sinus_ring(32.5, 10, 360, 11.6129, 0.8)
+    """
+    points1, indices1 = prim.sinus_ring(radius, depth, 360, 360/num_waves, length)
+
+    # points2, indices2 = prim.tube(radius + length, radius + length + 4, depth, 64)
+
+    # points1, indices1 = xfm.merge(points1, indices1, points2, indices2)
+
+    return points1, indices1
