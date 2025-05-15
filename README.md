@@ -9,6 +9,7 @@ This library saves some time for inexpert users of CAD to build gear assemblies 
 The output is a collection of STL files that can be loaded into a slicer for export to 
 3D printers. 
 
+![Example of generated planetary gears](images/example_1.png)
 
 Here's the helptext:
 
