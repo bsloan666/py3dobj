@@ -29,8 +29,10 @@ def planetary(sun_radius, ring_radius, planet_axle_radius, sun_axle_radius, dept
     points2, indices2 = comp.spur(planet_radius, planet_axle_radius, depth, twist)
     points3, indices3 = comp.ring(ring_radius, depth, -twist)
 
+    points1 = xfm.rotate(points1, 360/sun_teeth/-1.6, 2)
     stlio.save(os.path.join(out_dir, "sun.stl"), points1, indices1)
 
+    points3 = xfm.rotate(points3, 360/ring_teeth/1.6, 2)
     stlio.save(os.path.join(out_dir, "ring.stl"), points3, indices3)
 
     points2 = xfm.translate(points2, sun_radius + planet_radius, 0, 0)
@@ -91,11 +93,14 @@ def reducer_stack(ratio, repeats, minor_radius, axle_radius, depth, flip, twist,
 
 
 def right_angle_transmission(radius, axle_radius_in, axle_radius_out, depth, twist, out_dir):
+    nteeth = mach.gear_wheel(radius, 6,  0)
     points, indices = comp.bevel_spur(radius, axle_radius_in,  depth, twist)
+    points = xfm.rotate(points, 360/nteeth/2, 2)
     stlio.save(os.path.join(out_dir, "bevel_gear1.stl"), points, indices)
     points, indices = comp.bevel_spur(radius, axle_radius_out,  depth, -twist)
-    points = xfm.rotate(points, 90, 1)
-    points = xfm.translate(points, -radius, 0, radius)
+    points = xfm.rotate(points, 180, 2)
+    points = xfm.rotate(points, -90, 1)
+    points = xfm.translate(points, radius, 0, radius)
     stlio.save(os.path.join(out_dir, "bevel_gear2.stl"), points, indices)
 
 
